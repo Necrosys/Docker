@@ -14,11 +14,15 @@ RUN groupadd -g $groupid $username && \
     echo "$username ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     echo $username >/root/username
 
+# https://wiki.yoctoproject.org/wiki/TipsAndTricks/ResolvingLocaleIssues
 RUN locale-gen en_US en_US.UTF-8
 RUN dpkg-reconfigure locales
+RUN update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+ENV LANG=en_US.UTF-8
 
 ENV HOME=/home/$username
 ENV USER=$username
+
 WORKDIR /source
 
 ENTRYPOINT chroot --skip-chdir --userspec=$(cat /root/username):$(cat /root/username) / /bin/bash -i
